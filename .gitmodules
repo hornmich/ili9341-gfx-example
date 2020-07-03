@@ -1,0 +1,6 @@
+[submodule "Drivers/ili9341-spi-driver"]
+	path = Drivers/ili9341-spi-driver
+	url = https://github.com/hornmich/ili9341-spi-driver.git
+[submodule "ili9341-simple-gfx"]
+	path = ili9341-simple-gfx
+	url = https://github.com/hornmich/ili9341-simple-gfx.git
