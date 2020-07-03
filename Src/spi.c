@@ -34,7 +34,7 @@ void MX_SPI5_Init(void)
   hspi5.Instance = SPI5;
   hspi5.Init.Mode = SPI_MODE_MASTER;
   hspi5.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi5.Init.DataSize = SPI_DATASIZE_16BIT;
+  hspi5.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi5.Init.NSS = SPI_NSS_SOFT;
@@ -82,10 +82,10 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     hdma_spi5_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_spi5_tx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi5_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_spi5_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma_spi5_tx.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hdma_spi5_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_spi5_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_spi5_tx.Init.Mode = DMA_NORMAL;
-    hdma_spi5_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    hdma_spi5_tx.Init.Priority = DMA_PRIORITY_LOW;
     hdma_spi5_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_spi5_tx) != HAL_OK)
     {
