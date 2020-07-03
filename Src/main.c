@@ -30,6 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ili9341.h"
+#include "ili9341-gfx.h"
 
 /* USER CODE END Includes */
 
@@ -63,6 +64,16 @@ void gpio_dc_pin (ili9341_gpio_pin_value_t value);
 void gpio_rst_pin (ili9341_gpio_pin_value_t value);
 bool spi_tx_dma_ready (void);
 int spi_tx_dma_b (const uint8_t* data, uint32_t len);
+
+void test_h_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void draw_h_stripes(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint8_t cnt);
+void test_v_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void draw_v_stripes(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint8_t cnt);
+void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -123,12 +134,35 @@ int main(void)
   if (display == NULL) {
 	Error_Handler();
   }
+
+  ili_sgfx_brush_t brush = {
+	.bg_color = BLACK,
+	.fg_color = GREEN,
+	.size = 1
+  };
+
+/*
+  test_h_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+  test_h_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
+
+  test_v_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+  test_v_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
+
+  test_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+  test_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
+  test_filled_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+  test_filled_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
+  test_pixel(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+*/
+	test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -215,6 +249,156 @@ int spi_tx_dma_b (const uint8_t* data, uint32_t len)
 	HAL_SPI_Transmit_DMA(&hspi5, (unsigned char*)(data+i*65535), rest);
 
 	return 0;
+}
+
+void test_h_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	const uint8_t NUM_CLRS = 3;
+	uint16_t colors[] = {RED, GREEN, BLUE};
+
+	ili9341_set_orientation(desc, orientation);
+	for (int i = 0; i < NUM_CLRS; i++) {
+		brush.fg_color = colors[i];
+		ili_sgfx_clear_screen(desc, &brush);
+		draw_h_stripes(desc, brush, 18);
+		HAL_Delay(2000);
+	}
+}
+
+void draw_h_stripes(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint8_t cnt) {
+	coord_2d_t pos = {
+		.x = 1,
+		.y = 1
+	};
+	int16_t length = ili9341_get_screen_width(desc);
+	for (int i = 0; i < cnt; i++) {
+		ili_sgfx_draw_h_line(desc, &brush, pos, length);
+		brush.size++;
+		pos.y += brush.size*2 + 1;
+	}
+}
+
+void test_v_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	const uint8_t NUM_CLRS = 3;
+	uint16_t colors[] = {RED, GREEN, BLUE};
+
+	ili9341_set_orientation(desc, orientation);
+	for (int i = 0; i < NUM_CLRS; i++) {
+		brush.fg_color = colors[i];
+		ili_sgfx_clear_screen(desc, &brush);
+		draw_v_stripes(desc, brush, 18);
+		HAL_Delay(2000);
+	}
+}
+
+void draw_v_stripes(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint8_t cnt) {
+	coord_2d_t pos = {
+		.x = 1,
+		.y = 1
+	};
+	int16_t length = ili9341_get_screen_height(desc);
+	for (int i = 0; i < cnt; i++) {
+		ili_sgfx_draw_v_line(desc, &brush, pos, length);
+		brush.size++;
+		pos.x += brush.size*2 + 1;
+	}
+}
+
+void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	ili_sgfx_clear_screen(desc, &brush);
+	coord_2d_t top_left, bottom_right;
+	top_left.x = ili9341_get_screen_width(desc)/2 - 10;
+	top_left.y = ili9341_get_screen_height(desc)/2 - 10;
+	bottom_right.x = ili9341_get_screen_width(desc)/2 + 10;
+	bottom_right.y = ili9341_get_screen_height(desc)/2 + 10;
+
+	for (int i = 0; i < 9; i++) {
+		ili_sgfx_draw_rect(desc, &brush, top_left, bottom_right);
+		brush.size++;
+		top_left.x -= brush.size*2 + 1;
+		top_left.y -= brush.size*2 + 1;
+		bottom_right.x += brush.size*2 + 1;
+		bottom_right.y += brush.size*2 + 1;
+		HAL_Delay(2000);
+	}
+}
+
+void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	ili_sgfx_clear_screen(desc, &brush);
+	coord_2d_t top_left, bottom_right;
+	top_left.x = ili9341_get_screen_width(desc)/2 - 10;
+	top_left.y = ili9341_get_screen_height(desc)/2 - 10;
+	bottom_right.x = ili9341_get_screen_width(desc)/2 + 10;
+	bottom_right.y = ili9341_get_screen_height(desc)/2 + 10;
+	brush.bg_color = BLUE;
+	brush.fg_color = RED;
+
+	for (int i = 0; i < 9; i++) {
+		ili_sgfx_draw_filled_rect(desc, &brush, top_left, bottom_right);
+		brush.size++;
+		top_left.x -= brush.size*2 + 1;
+		top_left.y -= brush.size*2 + 1;
+		bottom_right.x += brush.size*2 + 1;
+		bottom_right.y += brush.size*2 + 1;
+		HAL_Delay(2000);
+	}
+}
+
+void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	ili_sgfx_clear_screen(desc, &brush);
+
+	coord_2d_t start = {
+			.x = 1,
+			.y = 1
+	};
+	coord_2d_t end = {
+			.x = ili9341_get_screen_width(desc),
+			.y = ili9341_get_screen_height(desc)
+	};
+	coord_2d_t coord = start;
+
+	uint16_t dx = end.x - start.x;
+	uint16_t dy = end.y - start.y;
+	for (coord.x = start.x; coord.x < end.x; coord.x++) {
+		coord.y = start.y + dy*(coord.x - start.x) / dx;
+		ili_sgfx_draw_pixel(desc, &brush, coord);
+	}
+}
+
+void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	ili_sgfx_clear_screen(desc, &brush);
+
+	coord_2d_t start = {
+			.x = 1,
+			.y = 1
+	};
+	coord_2d_t end = {
+				.x = ili9341_get_screen_width(desc),
+				.y = 1
+		};
+	uint8_t x_step = ili9341_get_screen_width(desc)/num_lines;
+	uint8_t y_step = ili9341_get_screen_height(desc)/num_lines;
+
+	for (int i = 0; i < num_lines; i++) {
+		ili_sgfx_draw_line(desc, &brush, start, end);
+		end.x -= x_step;
+		end.y += y_step;
+	}
+
+	brush.fg_color = BLUE;
+	start.x = ili9341_get_screen_width(desc);
+	start.y = ili9341_get_screen_height(desc);
+	end.x = 1;
+	end.y = ili9341_get_screen_height(desc);
+	for (int i = 0; i < num_lines; i++) {
+		ili_sgfx_draw_line(desc, &brush, start, end);
+		end.x += x_step;
+		end.y -= y_step;
+	}
+
 }
 /* USER CODE END 4 */
 
