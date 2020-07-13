@@ -31,6 +31,8 @@
 /* USER CODE BEGIN Includes */
 #include "ili9341.h"
 #include "ili9341-gfx.h"
+#include "stars_mono.h"
+#include "chess_mono.h"
 
 /* USER CODE END Includes */
 
@@ -73,6 +75,7 @@ void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_or
 void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation);
+void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 
 /* USER CODE END PFP */
 
@@ -153,8 +156,13 @@ int main(void)
   test_filled_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
   test_filled_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
   test_pixel(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-*/
+
 	test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
+*/
+  brush.fg_color = GREEN;
+  brush.bg_color = BLUE;
+  brush.size = 1;
+  test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -400,6 +408,72 @@ void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t n
 	}
 
 }
+
+void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+
+	ili_sgfx_brush_t base_bg = {
+			.bg_color = BLACK,
+			.fg_color = WHITE,
+			.size = 1
+	};
+
+	ili_sgfx_clear_screen(desc, &base_bg);
+	{
+		coord_2d_t coord = {.x = 0, .y = 0};
+		ili_sgfx_pixmap_t bmp = {
+				.width = CHESS_MONO_WIDTH,
+				.height = CHESS_MONO_HEIGHT,
+				.data = chess_mono_bits,
+				.inverted = true
+		};
+
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, false);
+	}
+
+	HAL_Delay(2000);
+	ili_sgfx_clear_screen(desc, &base_bg);
+	{
+		coord_2d_t coord = {.x = 0, .y = 0};
+		ili_sgfx_pixmap_t bmp = {
+				.width = STARS_MONO_WIDTH,
+				.height = STARS_MONO_HEIGHT,
+				.data = stars_mono_bits,
+				.inverted = true
+		};
+
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, false);
+	}
+	HAL_Delay(2000);
+	ili_sgfx_clear_screen(desc, &base_bg);
+	{
+		coord_2d_t coord = {.x = 0, .y = 0};
+		ili_sgfx_pixmap_t bmp = {
+				.width = CHESS_MONO_WIDTH,
+				.height = CHESS_MONO_HEIGHT,
+				.data = chess_mono_bits,
+				.inverted = true
+		};
+
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, true);
+	}
+
+	HAL_Delay(2000);
+	ili_sgfx_clear_screen(desc, &base_bg);
+	{
+		coord_2d_t coord = {.x = 0, .y = 0};
+		ili_sgfx_pixmap_t bmp = {
+				.width = STARS_MONO_WIDTH,
+				.height = STARS_MONO_HEIGHT,
+				.data = stars_mono_bits,
+				.inverted = true
+		};
+
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, true);
+	}
+	HAL_Delay(2000);
+}
+
 /* USER CODE END 4 */
 
  /**
