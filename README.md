@@ -28,3 +28,8 @@ The application inistantiates one display driver instance and loops over the fol
 * Draw pixmap with and without transparency.
 
 ![Lines and pixmap drawing record](lines_pixmap_demo.png)
+
+* Drawing UTF-8 characters from TrueType fonts
+* Different sizes
+
+![Fonts drawing record](fonts_demo.png)
