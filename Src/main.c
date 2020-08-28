@@ -377,7 +377,6 @@ void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_or
 void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
 	ili9341_set_orientation(desc, orientation);
 	ili_sgfx_clear_screen(desc, &brush);
-	coord_2d_t top_left, bottom_right;
 	ili_sgfx_rect_t rect = {
 				.top_left = {
 						.x = ili9341_get_screen_width(desc)/2 - 10,
