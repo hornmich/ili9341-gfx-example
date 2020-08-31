@@ -504,54 +504,78 @@ void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 	ili_sgfx_printf(desc, &brush, &coord, L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÖÜßäöü\n");
 }
 
-void test_printf_region(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
-	ili9341_set_orientation(desc, orientation);
-	ili_sgfx_rect_t area = {
+void test_printf_region(const ili_desc_ptr_t desc, ili_sgfx_brush_t brush, ili_orientation_t orientation) {
+	ili_set_orientation(desc, orientation);
+#define NUM_AREAS 3
+#define NUM_TESTS 6
+#define DELAY_MS 1000
+	ili_sgfx_rect_t test_area[NUM_AREAS] =  {
+		{
 			.top_left = {
 					.x = 0, .y = 0
 			},
 			.bottom_right = {
 					.x = ili9341_get_screen_width(desc)/2, .y = ili9341_get_screen_height(desc)/2
 			}
+		},
+		{
+			.top_left = {
+					.x = ili_get_screen_width(desc)/2 - ili_get_screen_width(desc)/4, .y = ili_get_screen_height(desc)/2 - ili_get_screen_height(desc)/4
+			},
+			.bottom_right = {
+					.x = ili_get_screen_width(desc)/2 + ili_get_screen_width(desc)/4, .y = ili_get_screen_height(desc)/2 + ili_get_screen_height(desc)/4
+			}
+		},
+		{
+			.top_left = {
+					.x = ili_get_screen_width(desc)/2, .y = ili_get_screen_height(desc)/2
+			},
+			.bottom_right = {
+					.x = ili_get_screen_width(desc), .y = ili_get_screen_height(desc)
+			}
+		},
 	};
-	ili_sgfx_brush_t clr_brush;
-	{
-		ili_sgfx_clear_screen(desc, &brush);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-		brush.h_alignment = H_LEFT;
-		brush.v_alignment = V_TOP;
-		ili_sgfx_printf_reg(desc, &brush, area, L"TOP_LEFT");
-		HAL_Delay(2000);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-		brush.h_alignment = H_CENTER;
-		brush.v_alignment = V_MIDDLE;
-		ili_sgfx_printf_reg(desc, &brush, area, L"MID_CENTER");
-		HAL_Delay(2000);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-		brush.h_alignment = H_RIGHT;
-		brush.v_alignment = V_BOTTOM;
-		ili_sgfx_printf_reg(desc, &brush, area, L"BOT_RIGHT");
-		HAL_Delay(2000);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-	}
+	ili_sgfx_brush_t test_brush[NUM_TESTS];
+	const wchar_t* test_string[NUM_TESTS] = {
+		L"TOP_LEFT",
+		L"MID_CENTER",
+		L"BOT_RIGHT",
+		L"Very looooooooooong text aligned to TOP_LEFT",
+		L"Very looooooooooong text aligned to MID_CENTER",
+		L"Very looooooooooong text aligned to BOT_RIGHT"
+	};
+	test_brush[0] = brush;
+	test_brush[0].h_alignment = H_LEFT;
+	test_brush[0].v_alignment = V_TOP;
+	test_brush[1] = brush;
+	test_brush[1].h_alignment = H_CENTER;
+	test_brush[1].v_alignment = V_MIDDLE;
+	test_brush[2] = brush;
+	test_brush[2].h_alignment = H_RIGHT;
+	test_brush[2].v_alignment = V_BOTTOM;
+	test_brush[3] = brush;
+	test_brush[3].h_alignment = H_LEFT;
+	test_brush[3].v_alignment = V_TOP;
+	test_brush[4] = brush;
+	test_brush[4].h_alignment = H_CENTER;
+	test_brush[4].v_alignment = V_MIDDLE;
+	test_brush[5] = brush;
+	test_brush[5].h_alignment = H_RIGHT;
+	test_brush[5].v_alignment = V_BOTTOM;
 
-	{
-		brush.h_alignment = H_LEFT;
-		brush.v_alignment = V_TOP;
-		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to TOP_LEFT");
-		HAL_Delay(2000);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-		brush.h_alignment = H_CENTER;
-		brush.v_alignment = V_MIDDLE;
-		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to MID_CENTER");
-		HAL_Delay(2000);
-		ili_sgfx_clear_region(desc, area, &clr_brush);
-		brush.h_alignment = H_RIGHT;
-		brush.v_alignment = V_BOTTOM;
-		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to BOT_RIGHT");
-		HAL_Delay(2000);
+	ili_sgfx_brush_t clr_brush;
+	clr_brush.bg_color = DARKGREY;
+	for (int area = 0; area < NUM_AREAS; area++) {
 		ili_sgfx_clear_screen(desc, &brush);
+		for (int test = 0; test < NUM_TESTS; test++) {
+			ili_sgfx_clear_region(desc, test_area[area], &clr_brush);
+			ili_sgfx_printf_reg(desc, &test_brush[test], test_area[area], test_string[test]);
+			HAL_Delay(DELAY_MS);
+		}
 	}
+#undef NUM_AREAS
+#undef DELAY_MS
+#undef NUM_TESTS
 }
 
 /* USER CODE END 4 */
