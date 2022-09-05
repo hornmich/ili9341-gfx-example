@@ -1,15 +1,15 @@
 # ili9341-gfx-example
 
-Example of using [ili9341-simple-gfx]() on STM32F429I
+Example of using [ili9341-simple-gfx](https://github.com/hornmich/ili9341-simple-gfx) on STM32F429I
 discovery kit.
 
 ## Overview
 
-This is a testing and example project to test the [ili9341-simple-gfx]()
+This is a testing and example project to test the [ili9341-simple-gfx](https://github.com/hornmich/ili9341-simple-gfx)
 on STM32F429I discovery kit.
 
 The project is using STM32CubeIDE, STM32CubeMX generated code skeleton and HAL layer as basis and can be used as quick to run
-reference of how to use the [ili9341-simple-gfx]().
+reference of how to use the [ili9341-simple-gfx](https://github.com/hornmich/ili9341-simple-gfx).
 
 The application inistantiates one display driver instance and loops over the following steps to test the API functions:
 
