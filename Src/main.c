@@ -36,6 +36,7 @@
 #include "chess_mono.h"
 #include "font_Arial_12_Bold.h"
 #include "font_Arial_24_Bold.h"
+#include "font_Arial_36_Bold.h"
 
 /* USER CODE END Includes */
 
@@ -80,6 +81,8 @@ void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_o
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation);
 void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_pixmap_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation);
+
 
 /* USER CODE END PFP */
 
@@ -163,6 +166,7 @@ int main(void)
 
 	test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
 */
+
   brush.fg_color = GREEN;
   brush.bg_color = BLUE;
   brush.size = 1;
@@ -174,34 +178,11 @@ int main(void)
 		  .y = 1,
   };
   ili_sgfx_clear_screen(display, &brush);
-  uint8_t shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'#');
-  coord.x += shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'!');
-  coord.x += shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'#');
-  coord.x += shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'!');
-  coord.x += shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'#');
-  coord.x += shift;
-  shift = ili_sgfx_putc(display, &brush, coord, &font_arial_reg_12, false, L'!');
-  coord.x += shift;
 
-  coord.x = 0;
-  coord.y = 10;
+  test_printf(display, brush, &font_Arial_12_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
   ili_sgfx_clear_screen(display, &brush);
-  ili_sgfx_printf(display, &brush, coord, &font_arial_reg_12, false, L"#!!##\n!!!!\r##");
-
-  /* volatile wchar_t wc = L'á';
-  wc = L'ä';
-  wc = L'Ä';
-  wc = L'ö';
-  wc = L'Ö';
-  wc = L'ü';
-  wc = L'Ü';
-  wc = L'ß';
-*/
+  HAL_Delay(2000);
+  test_printf(display, brush, &font_Arial_24_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
 
   /* USER CODE END 2 */
 
@@ -209,8 +190,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -462,21 +441,6 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 	{
 		coord_2d_t coord = {.x = 0, .y = 0};
 		ili_sgfx_pixmap_t bmp = {
-				.width = ARIAL_REG_12_WIDTH,
-				.height = ARIAL_REG_12_HEIGHT,
-				.data = arial_reg_12_bits,
-				.inverted = false
-		};
-
-		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, false);
-	}
-
-	HAL_Delay(2000);
-
-	ili_sgfx_clear_screen(desc, &base_bg);
-	{
-		coord_2d_t coord = {.x = 0, .y = 0};
-		ili_sgfx_pixmap_t bmp = {
 				.width = CHESS_MONO_WIDTH,
 				.height = CHESS_MONO_HEIGHT,
 				.data = chess_mono_bits,
@@ -537,42 +501,14 @@ void test_pixmap_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 			.fg_color = WHITE,
 			.size = 1
 	};
-
-	ili_sgfx_clear_screen(desc, &base_bg);
-	{
-		coord_2d_t dest_coord = {.x = 0, .y = 0};
-		ili_sgfx_pixmap_t bmp = {
-				.width = ARIAL_REG_12_WIDTH,
-				.height = ARIAL_REG_12_HEIGHT,
-				.data = arial_reg_12_bits,
-				.inverted = true
-		};
-		coord_2d_t src_coord = {.x = 9, .y = 2};
-		uint16_t width = 9;
-		uint16_t height = 12;
-
-
-		ili_sgfx_draw_pixmap_rect(desc, &brush, &bmp, false, dest_coord, src_coord, width, height);
-	}
-
-	HAL_Delay(2000);
-	ili_sgfx_clear_screen(desc, &base_bg);
-	{
-		coord_2d_t dest_coord = {.x = 0, .y = 0};
-		ili_sgfx_pixmap_t bmp = {
-				.width = ARIAL_REG_12_WIDTH,
-				.height = ARIAL_REG_12_HEIGHT,
-				.data = arial_reg_12_bits,
-				.inverted = true
-		};
-		coord_2d_t src_coord = {.x = 9, .y = 2};
-		uint16_t width = 9;
-		uint16_t height = 12;
-
-
-		ili_sgfx_draw_pixmap_rect(desc, &brush, &bmp, true, dest_coord, src_coord, width, height);
-	}
 }
+
+void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	coord_2d_t coord = {.x = 0, .y = 0};
+	ili_sgfx_printf(desc, &brush, &coord, font, false, L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÖÜßäöü\n");
+}
+
 /* USER CODE END 4 */
 
  /**
