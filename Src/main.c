@@ -29,7 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ili9341.h"
+#include "ili_drv.h"
 #include "ili9341-gfx.h"
 #include "stars_mono.h"
 #include "chess_mono.h"
@@ -193,6 +193,22 @@ int main(void)
 	  test_printf(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
 	  HAL_Delay(2000);
 
+	  ili_sgfx_clear_screen(display, &brush);
+	  brush.font = &font_Arial_12_Bold;
+	  brush.transparent = false;
+	  test_printf_region(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+	  ili_sgfx_clear_screen(display, &brush);
+	  brush.font = &font_Arial_24_Bold;
+	  brush.transparent = false;
+	  test_printf_region(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+	  ili_sgfx_clear_screen(display, &brush);
+	  brush.font = &font_Arial_36_Bold;
+	  brush.transparent = false;
+	  test_printf_region(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+
 	  /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -336,19 +352,24 @@ void draw_v_stripes(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint8
 void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
 	ili9341_set_orientation(desc, orientation);
 	ili_sgfx_clear_screen(desc, &brush);
-	coord_2d_t top_left, bottom_right;
-	top_left.x = ili9341_get_screen_width(desc)/2 - 10;
-	top_left.y = ili9341_get_screen_height(desc)/2 - 10;
-	bottom_right.x = ili9341_get_screen_width(desc)/2 + 10;
-	bottom_right.y = ili9341_get_screen_height(desc)/2 + 10;
+	ili_sgfx_rect_t rect = {
+			.top_left = {
+					.x = ili9341_get_screen_width(desc)/2 - 10,
+					.y = ili9341_get_screen_height(desc)/2 - 10
+			},
+			.bottom_right = {
+					.x = ili9341_get_screen_width(desc)/2 + 10,
+					.y = ili9341_get_screen_height(desc)/2 + 10
+			}
+	};
 
 	for (int i = 0; i < 9; i++) {
-		ili_sgfx_draw_rect(desc, &brush, top_left, bottom_right);
+		ili_sgfx_draw_rect(desc, &brush, rect);
 		brush.size++;
-		top_left.x -= brush.size*2 + 1;
-		top_left.y -= brush.size*2 + 1;
-		bottom_right.x += brush.size*2 + 1;
-		bottom_right.y += brush.size*2 + 1;
+		rect.top_left.x -= brush.size*2 + 1;
+		rect.top_left.y -= brush.size*2 + 1;
+		rect.bottom_right.x += brush.size*2 + 1;
+		rect.bottom_right.y += brush.size*2 + 1;
 		HAL_Delay(500);
 	}
 }
@@ -357,20 +378,26 @@ void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 	ili9341_set_orientation(desc, orientation);
 	ili_sgfx_clear_screen(desc, &brush);
 	coord_2d_t top_left, bottom_right;
-	top_left.x = ili9341_get_screen_width(desc)/2 - 10;
-	top_left.y = ili9341_get_screen_height(desc)/2 - 10;
-	bottom_right.x = ili9341_get_screen_width(desc)/2 + 10;
-	bottom_right.y = ili9341_get_screen_height(desc)/2 + 10;
+	ili_sgfx_rect_t rect = {
+				.top_left = {
+						.x = ili9341_get_screen_width(desc)/2 - 10,
+						.y = ili9341_get_screen_height(desc)/2 - 10
+				},
+				.bottom_right = {
+						.x = ili9341_get_screen_width(desc)/2 + 10,
+						.y = ili9341_get_screen_height(desc)/2 + 10
+				}
+	};
 	brush.bg_color = BLUE;
 	brush.fg_color = RED;
 
 	for (int i = 0; i < 9; i++) {
-		ili_sgfx_draw_filled_rect(desc, &brush, top_left, bottom_right);
+		ili_sgfx_draw_filled_rect(desc, &brush, rect);
 		brush.size++;
-		top_left.x -= brush.size*2 + 1;
-		top_left.y -= brush.size*2 + 1;
-		bottom_right.x += brush.size*2 + 1;
-		bottom_right.y += brush.size*2 + 1;
+		rect.top_left.x -= brush.size*2 + 1;
+		rect.top_left.y -= brush.size*2 + 1;
+		rect.bottom_right.x += brush.size*2 + 1;
+		rect.bottom_right.y += brush.size*2 + 1;
 		HAL_Delay(1000);
 	}
 }
@@ -473,7 +500,59 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
 	ili9341_set_orientation(desc, orientation);
 	coord_2d_t coord = {.x = 0, .y = 0};
+	brush.v_alignment = H_LEFT;
+	brush.h_alignment = V_TOP;
 	ili_sgfx_printf(desc, &brush, &coord, L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÖÜßäöü\n");
+}
+
+void test_printf_region(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
+	ili9341_set_orientation(desc, orientation);
+	ili_sgfx_rect_t area = {
+			.top_left = {
+					.x = 0, .y = 0
+			},
+			.bottom_right = {
+					.x = ili9341_get_screen_width(desc)/2, .y = ili9341_get_screen_height(desc)/2
+			}
+	};
+	ili_sgfx_brush_t clr_brush;
+	{
+		ili_sgfx_clear_screen(desc, &brush);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+		brush.h_alignment = H_LEFT;
+		brush.v_alignment = V_TOP;
+		ili_sgfx_printf_reg(desc, &brush, area, L"TOP_LEFT");
+		HAL_Delay(2000);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+		brush.h_alignment = H_CENTER;
+		brush.v_alignment = V_MIDDLE;
+		ili_sgfx_printf_reg(desc, &brush, area, L"MID_CENTER");
+		HAL_Delay(2000);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+		brush.h_alignment = H_RIGHT;
+		brush.v_alignment = V_BOTTOM;
+		ili_sgfx_printf_reg(desc, &brush, area, L"BOT_RIGHT");
+		HAL_Delay(2000);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+	}
+
+	{
+		brush.h_alignment = H_LEFT;
+		brush.v_alignment = V_TOP;
+		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to TOP_LEFT");
+		HAL_Delay(2000);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+		brush.h_alignment = H_CENTER;
+		brush.v_alignment = V_MIDDLE;
+		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to MID_CENTER");
+		HAL_Delay(2000);
+		ili_sgfx_clear_region(desc, area, &clr_brush);
+		brush.h_alignment = H_RIGHT;
+		brush.v_alignment = V_BOTTOM;
+		ili_sgfx_printf_reg(desc, &brush, area, L"Very looooooooooong text aligned to BOT_RIGHT");
+		HAL_Delay(2000);
+		ili_sgfx_clear_screen(desc, &brush);
+	}
 }
 
 /* USER CODE END 4 */
