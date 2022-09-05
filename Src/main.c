@@ -34,7 +34,8 @@
 #include "ili9341-gfx.h"
 #include "stars_mono.h"
 #include "chess_mono.h"
-#include "arial_reg_12.h"
+#include "font_Arial_12_Bold.h"
+#include "font_Arial_24_Bold.h"
 
 /* USER CODE END Includes */
 
@@ -141,8 +142,6 @@ int main(void)
 	Error_Handler();
   }
 
-<<<<<<< HEAD
-=======
   ili_sgfx_brush_t brush = {
 	.bg_color = BLACK,
 	.fg_color = GREEN,
@@ -204,36 +203,15 @@ int main(void)
   wc = L'ß';
 */
 
->>>>>>> 942e805... Implement first test of putc and printf
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  ili_sgfx_brush_t brush = {
-		.bg_color = BLACK,
-		.fg_color = GREEN,
-		.size = 1
-	  };
 
-	  test_h_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-	  test_h_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
 
-	  test_v_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-	  test_v_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
-
-	  test_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-	  test_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
-	  test_filled_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-	  test_filled_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
-
-	  test_pixel(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-
-	  test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
-
-	  test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-	  /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -389,7 +367,7 @@ void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_or
 		top_left.y -= brush.size*2 + 1;
 		bottom_right.x += brush.size*2 + 1;
 		bottom_right.y += brush.size*2 + 1;
-		HAL_Delay(500);
+		HAL_Delay(2000);
 	}
 }
 
@@ -411,7 +389,7 @@ void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 		top_left.y -= brush.size*2 + 1;
 		bottom_right.x += brush.size*2 + 1;
 		bottom_right.y += brush.size*2 + 1;
-		HAL_Delay(1000);
+		HAL_Delay(2000);
 	}
 }
 
@@ -435,7 +413,6 @@ void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_o
 		coord.y = start.y + dy*(coord.x - start.x) / dx;
 		ili_sgfx_draw_pixel(desc, &brush, coord);
 	}
-	HAL_Delay(2000);
 }
 
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation) {
@@ -476,7 +453,7 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 	ili9341_set_orientation(desc, orientation);
 
 	ili_sgfx_brush_t base_bg = {
-			.bg_color = BLUE,
+			.bg_color = BLACK,
 			.fg_color = WHITE,
 			.size = 1
 	};
