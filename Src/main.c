@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <arial_reg_12_img.h>
 #include "main.h"
 #include "crc.h"
 #include "dma.h"
@@ -80,7 +79,6 @@ void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation);
 void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
-void test_pixmap_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation);
 
 
@@ -145,52 +143,46 @@ int main(void)
 	Error_Handler();
   }
 
-  ili_sgfx_brush_t brush = {
-	.bg_color = BLACK,
-	.fg_color = GREEN,
-	.size = 1
-  };
-
-/*
-  test_h_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  test_h_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
-
-  test_v_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  test_v_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
-
-  test_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  test_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
-  test_filled_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  test_filled_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
-  test_pixel(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-
-	test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
-*/
-
-  brush.fg_color = GREEN;
-  brush.bg_color = BLUE;
-  brush.size = 1;
-  //test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-
-  test_pixmap_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  coord_2d_t coord = {
-		  .x = 1,
-		  .y = 1,
-  };
-  ili_sgfx_clear_screen(display, &brush);
-
-  test_printf(display, brush, &font_Arial_12_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
-  ili_sgfx_clear_screen(display, &brush);
-  HAL_Delay(2000);
-  test_printf(display, brush, &font_Arial_24_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+	  ili_sgfx_brush_t brush = {
+		.bg_color = BLACK,
+		.fg_color = GREEN,
+		.size = 1
+	  };
+
+	  test_h_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  test_h_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
+
+	  test_v_line(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  test_v_line(display, brush, ILI9341_ORIENTATION_VERTICAL);
+
+	  test_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  test_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
+	  test_filled_rect(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  test_filled_rect(display, brush, ILI9341_ORIENTATION_VERTICAL);
+
+	  test_pixel(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+
+	  test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
+
+	  test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+
+	  ili_sgfx_clear_screen(display, &brush);
+	  test_printf(display, brush, &font_Arial_12_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+	  ili_sgfx_clear_screen(display, &brush);
+	  test_printf(display, brush, &font_Arial_24_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+	  ili_sgfx_clear_screen(display, &brush);
+	  test_printf(display, brush, &font_Arial_36_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  HAL_Delay(2000);
+
+	  /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -346,7 +338,7 @@ void test_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_or
 		top_left.y -= brush.size*2 + 1;
 		bottom_right.x += brush.size*2 + 1;
 		bottom_right.y += brush.size*2 + 1;
-		HAL_Delay(2000);
+		HAL_Delay(500);
 	}
 }
 
@@ -368,7 +360,7 @@ void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 		top_left.y -= brush.size*2 + 1;
 		bottom_right.x += brush.size*2 + 1;
 		bottom_right.y += brush.size*2 + 1;
-		HAL_Delay(2000);
+		HAL_Delay(1000);
 	}
 }
 
@@ -392,6 +384,7 @@ void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_o
 		coord.y = start.y + dy*(coord.x - start.x) / dx;
 		ili_sgfx_draw_pixel(desc, &brush, coord);
 	}
+	HAL_Delay(2000);
 }
 
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation) {
@@ -432,7 +425,7 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 	ili9341_set_orientation(desc, orientation);
 
 	ili_sgfx_brush_t base_bg = {
-			.bg_color = BLACK,
+			.bg_color = BLUE,
 			.fg_color = WHITE,
 			.size = 1
 	};
@@ -491,16 +484,6 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, true);
 	}
 	HAL_Delay(2000);
-}
-
-void test_pixmap_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
-	ili9341_set_orientation(desc, orientation);
-
-	ili_sgfx_brush_t base_bg = {
-			.bg_color = BLACK,
-			.fg_color = WHITE,
-			.size = 1
-	};
 }
 
 void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation) {
