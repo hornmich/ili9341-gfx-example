@@ -79,7 +79,8 @@ void test_filled_rect(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili
 void test_pixel(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 void test_line(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, uint16_t num_lines, ili9341_orientation_t orientation);
 void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
-void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation);
+void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
+void test_printf_region(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation);
 
 
 /* USER CODE END PFP */
@@ -170,16 +171,26 @@ int main(void)
 
 	  test_line(display, brush, 40, ILI9341_ORIENTATION_HORIZONTAL_UD);
 
+	  brush.transparent = false;
 	  test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  brush.transparent = true;
+	  test_pixmap(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  brush.transparent = false;
 
 	  ili_sgfx_clear_screen(display, &brush);
-	  test_printf(display, brush, &font_Arial_12_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  brush.font = &font_Arial_12_Bold;
+	  brush.transparent = false;
+	  test_printf(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
 	  HAL_Delay(2000);
 	  ili_sgfx_clear_screen(display, &brush);
-	  test_printf(display, brush, &font_Arial_24_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  brush.font = &font_Arial_24_Bold;
+	  brush.transparent = false;
+	  test_printf(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
 	  HAL_Delay(2000);
 	  ili_sgfx_clear_screen(display, &brush);
-	  test_printf(display, brush, &font_Arial_36_Bold, ILI9341_ORIENTATION_HORIZONTAL_UD);
+	  brush.font = &font_Arial_36_Bold;
+	  brush.transparent = false;
+	  test_printf(display, brush, ILI9341_ORIENTATION_HORIZONTAL_UD);
 	  HAL_Delay(2000);
 
 	  /* USER CODE END WHILE */
@@ -440,7 +451,7 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 				.inverted = true
 		};
 
-		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, false);
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp);
 	}
 
 	HAL_Delay(2000);
@@ -454,42 +465,15 @@ void test_pixmap(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_
 				.inverted = true
 		};
 
-		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, false);
-	}
-	HAL_Delay(2000);
-	ili_sgfx_clear_screen(desc, &base_bg);
-	{
-		coord_2d_t coord = {.x = 0, .y = 0};
-		ili_sgfx_pixmap_t bmp = {
-				.width = CHESS_MONO_WIDTH,
-				.height = CHESS_MONO_HEIGHT,
-				.data = chess_mono_bits,
-				.inverted = true
-		};
-
-		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, true);
-	}
-
-	HAL_Delay(2000);
-	ili_sgfx_clear_screen(desc, &base_bg);
-	{
-		coord_2d_t coord = {.x = 0, .y = 0};
-		ili_sgfx_pixmap_t bmp = {
-				.width = STARS_MONO_WIDTH,
-				.height = STARS_MONO_HEIGHT,
-				.data = stars_mono_bits,
-				.inverted = true
-		};
-
-		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp, true);
+		ili_sgfx_draw_pixmap(desc, &brush, coord, &bmp);
 	}
 	HAL_Delay(2000);
 }
 
-void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, const lw_font_t* font ,ili9341_orientation_t orientation) {
+void test_printf(const ili9341_desc_ptr_t desc, ili_sgfx_brush_t brush, ili9341_orientation_t orientation) {
 	ili9341_set_orientation(desc, orientation);
 	coord_2d_t coord = {.x = 0, .y = 0};
-	ili_sgfx_printf(desc, &brush, &coord, font, false, L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÖÜßäöü\n");
+	ili_sgfx_printf(desc, &brush, &coord, L" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÄÖÜßäöü\n");
 }
 
 /* USER CODE END 4 */
